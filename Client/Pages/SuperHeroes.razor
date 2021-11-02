@@ -1,0 +1,77 @@
+﻿@page "/superHeroes"
+@inject ISuperHeroService SuperHeroService
+@inject NavigationManager NavigationManager
+@implements IDisposable
+<h3>SuperHeroes</h3>
+@if (SuperHeroService.Heroes.Count != 0)
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Hero Name</th>
+            <th>Comic</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var hero in SuperHeroService.Heroes)
+        {
+            <tr>
+                <td>@hero.FirstName</td>
+                <td>@hero.LastName</td>
+                <td>@hero.HeroName</td>
+                <td>@hero.Comic.Name</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="(()=>ShowHero(hero.Id))">Show</button>
+                </td>
+                
+                <td>
+                    <button class="btn btn-primary" @onclick="(()=>EditHero(hero.Id))">Edit</button>
+                </td>
+                <td>
+                    <button class="btn btn-danger" @onclick="(()=>DeleteHero(hero.Id))">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Loading....</p>
+}
+
+<EditSuperHero Hero="heroToEdit"></EditSuperHero>
+@code {
+    SuperHeroDB.Shared.SuperHero heroToEdit = new();
+    protected override async Task OnInitializedAsync()
+    {
+        await SuperHeroService.GetComics(); 
+        await SuperHeroService.GetSuperHeroes();
+        SuperHeroService.OnChange += StateHasChanged;
+
+    }
+
+    public void ShowHero(int id)
+    {
+        NavigationManager.NavigateTo($"superhero/{id}");
+    }
+
+    public void EditHero(int id)
+    {
+        heroToEdit = SuperHeroService.Heroes.Find(h => h.Id == id);
+    }
+
+    public void DeleteHero(int id)
+    {
+        SuperHeroService.DeleteSuperHero(id);
+    }
+    public void Dispose()
+    {
+        SuperHeroService.OnChange -= StateHasChanged;
+    }
+}
