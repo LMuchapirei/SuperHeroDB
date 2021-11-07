@@ -65,11 +65,16 @@ else
     {
         heroToEdit = SuperHeroService.Heroes.Find(h => h.Id == id);
     }
-
-    public void DeleteHero(int id)
+    //
+    // public void DeleteHero(int id)
+    // {
+    //     SuperHeroService.DeleteSuperHero(id);
+    // }
+    public  void DeleteHero(int id)
     {
         SuperHeroService.DeleteSuperHero(id);
     }
+    
     public void Dispose()
     {
         SuperHeroService.OnChange -= StateHasChanged;

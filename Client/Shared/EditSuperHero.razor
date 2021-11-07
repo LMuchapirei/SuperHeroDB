@@ -1,4 +1,5 @@
-﻿@inject ISuperHeroService SuperHeroService
+﻿@using SuperHeroDB.Shared
+@inject ISuperHeroService SuperHeroService
 @inject IJSRuntime JsRuntime
 @if (Hero.Id == 0 )
 {
@@ -47,12 +48,15 @@ else
     protected override async Task OnParametersSetAsync()
     {
         await SuperHeroService.GetComics();
-        comicId = Hero.Comic.Id;
+        Hero.Comic = null;
+        comicId = Hero.ComicId;
     }
     async Task HandleSubmit()
     {
-        
-        Hero.Comic = SuperHeroService.Comics.FirstOrDefault(c => c.Id == comicId);
+
+        Hero.Comic = null;
+        Hero.ComicId = comicId;
+            // SuperHeroService.Comics.FirstOrDefault(c => c.Id == comicId);
         await JsRuntime.InvokeVoidAsync("console.log", Hero);
         if (Hero.Id == 0)
         {
